@@ -1,0 +1,14 @@
+ body {
+     background-image: url("images/space.jpg");
+     background-repeat: repeat;
+     background-color: black;
+     color: white;
+ }
+
+ table, tr, td {
+    border: 1px solid white;
+ }
+
+ table {
+    width: 100%;
+ }
