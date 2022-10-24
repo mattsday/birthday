@@ -64,11 +64,16 @@ func main() {
 	}
 
 	log.Printf("Inserting %v products to Firestore\n", len(products))
+
+	bw := fs.BulkWriter(ctx)
+
 	for _, product := range products {
-		_, err = fs.Collection(collection).Doc(fmt.Sprintf("%v", product.Sku)).Set(ctx, product)
+		_, err := bw.Set(fs.Collection(collection).Doc(fmt.Sprintf("%v", product.Sku)), product)
 		if err != nil {
 			log.Printf("Error inserting %v: %v\n", product.Sku, err)
 		}
 	}
+	bw.End()
+	bw.Flush()
 	log.Println("Done")
 }
