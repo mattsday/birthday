@@ -1,5 +1,5 @@
  body {
-     background-image: url("images/space.jpg");
+     background-image: url("/html/static/bg.jpg");
      background-repeat: repeat;
      background-color: black;
      color: white;
