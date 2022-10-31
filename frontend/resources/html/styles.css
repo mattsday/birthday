@@ -3,10 +3,12 @@
      background-repeat: repeat;
      background-color: black;
      color: white;
+     width: 640px;
+     border: 1px solid white;
  }
 
  table, tr, td {
-    border: 1px solid white;
+    /*border: 1px solid white;*/
  }
 
  table {
