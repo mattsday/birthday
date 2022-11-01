@@ -1,8 +1,29 @@
+{{- /*gotype:data.pageData*/ -}}
+
 {{template "header.tmpl" .}}
 {{template "nav.tmpl" .}}
 
 <body>
-    <h1>Shop</h1>
+<h1>Shop</h1>
+
+<table style="width: 100%">
+    {{ range $k, $item := .Products }}
+        <tr>
+            <td colspan="2">
+                <h1>{{$item.Name}}</h1>
+            </td>
+        </tr>
+        <tr>
+            <td><img src="{{$item.Image}}" alt="Image of {{$item.Name}}" style="max-width: 120px; max-height: 120px"/></td>
+            <td>{{$item.Description}}</td>
+        </tr>
+            <tr>
+                <td>£{{$item.Price}}</td>
+                <td><b>Add to Cart</b></td>
+            </tr>
+    {{end}}
+</table>
+
 </body>
 
 {{template "footer.tmpl" .}}

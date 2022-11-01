@@ -1,9 +1,6 @@
 package main
 
 import (
-	"cloud.google.com/go/firestore"
-	"context"
-	firebase "firebase.google.com/go/v4"
 	"fmt"
 	"github.com/gorilla/mux"
 	"html/template"
@@ -15,26 +12,16 @@ import (
 	"strings"
 )
 
-var fs *firestore.Client
-
 const defaultPort = 8080
 
 type pageData struct {
-	Title string
+	Title    string
+	Products []Product
 }
 
 func main() {
-	// Connect to Firestore
-	ctx := context.Background()
-	fb := &firebase.Config{}
-	app, err := firebase.NewApp(ctx, fb)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fs, err = app.Firestore(ctx)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	// Init firebase connection
+	initFirebase()
 
 	port, err := strconv.Atoi(os.Getenv("PORT"))
 	if port == 0 || err != nil {
@@ -52,6 +39,7 @@ func main() {
 	site := r.PathPrefix("/").Subrouter()
 	site.PathPrefix("/html/static/").Handler(s)
 	site.HandleFunc("/", home)
+	site.HandleFunc("/shop", shop)
 	//site.HandleFunc("/logged-out", loginPage).Methods(http.MethodGet)
 	log.Println("Startup Complete, listening on port", port)
 	log.Fatal(http.ListenAndServe(":"+fmt.Sprintf("%v", port), r))
@@ -89,6 +77,26 @@ func home(w http.ResponseWriter, r *http.Request) {
 	t := template.Must(template.New("index.tmpl").ParseFiles("resources/templates/index.tmpl", "resources/templates/header.tmpl", "resources/templates/nav.tmpl", "resources/templates/footer.tmpl"))
 	//w.Write([]byte("Hello world"))
 	err := t.Execute(w, pd)
+	if err != nil {
+		log.Printf("Error rendering page: %v\n", err)
+		return
+	}
+}
+
+func shop(w http.ResponseWriter, r *http.Request) {
+	products, err := randomItems(r.Context(), 5)
+	if err != nil {
+		log.Printf("Error rendering page: %v\n", err)
+		return
+	}
+	pd := pageData{
+		Title:    "Hello World",
+		Products: products,
+	}
+
+	t := template.Must(template.New("shop.tmpl").ParseFiles("resources/templates/shop.tmpl", "resources/templates/header.tmpl", "resources/templates/nav.tmpl", "resources/templates/footer.tmpl"))
+	//w.Write([]byte("Hello world"))
+	err = t.Execute(w, pd)
 	if err != nil {
 		log.Printf("Error rendering page: %v\n", err)
 		return
